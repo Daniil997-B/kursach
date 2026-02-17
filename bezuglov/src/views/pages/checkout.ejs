@@ -1,0 +1,36 @@
+<%- include("../partials/head") %>
+<%- include("../partials/header") %>
+
+<main class="container section narrow">
+  <div class="card pad">
+    <h1 class="h1">Оформление заказа</h1>
+    <p class="muted">Укажи адрес доставки/получения. Статус заказа можно отслеживать в профиле.</p>
+
+    <% if (typeof error !== "undefined" && error) { %>
+      <div class="alert alert--err"><%= error %></div>
+    <% } %>
+
+    <div class="summary">
+      <div class="summary__row">
+        <span class="muted">Товаров</span>
+        <b><%= cart.qty %></b>
+      </div>
+      <div class="summary__row">
+        <span class="muted">Сумма</span>
+        <b><%= cart.total %> ₽</b>
+      </div>
+    </div>
+
+    <form method="POST" action="/checkout" class="form">
+      <label class="field">
+        <div class="label">Адрес</div>
+        <input name="address" required placeholder="Город, улица, дом, квартира / пункт выдачи" />
+      </label>
+
+      <button class="btn btn--wide" type="submit">Подтвердить заказ</button>
+    </form>
+  </div>
+</main>
+
+<%- include("../partials/footer") %>
+<%- include("../partials/tail") %>

@@ -1,0 +1,73 @@
+<%- include("../partials/head") %>
+<%- include("../partials/header") %>
+
+<main class="container section">
+  <div class="card pad">
+    <div class="row" style="justify-content:space-between; align-items:flex-start; flex-wrap:wrap">
+      <div>
+        <h1 class="h1">Админ · Товары</h1>
+        <p class="muted">Добавляй новые товары, редактируй и удаляй существующие.</p>
+
+    <%- include("../partials/admin_tabs", { active: "products" }) %>
+      </div>
+      <a class="btn btn--primary" href="/admin/products/new">+ Добавить товар</a>
+    </div>
+
+    <form class="filters" method="GET" action="/admin/products">
+      <div class="filters__row">
+        <input class="input" name="q" placeholder="Поиск: название или артикул" value="<%= q || '' %>">
+        <button class="btn" type="submit">Искать</button>
+        <a class="btn btn--ghost" href="/admin/products">Сброс</a>
+      </div>
+    </form>
+
+    <% if (!products.length) { %>
+      <div class="empty">
+        <div class="empty__title">Товаров нет</div>
+        <div class="muted">Добавь первый товар кнопкой выше.</div>
+      </div>
+    <% } else { %>
+      <div class="tablewrap" style="margin-top:14px">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Товар</th>
+              <th>Категория</th>
+              <th>Бренд</th>
+              <th>Цена</th>
+              <th>Остаток</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% products.forEach(p => { %>
+              <tr>
+                <td data-label="ID"><%= p.id %></td>
+                <td data-label="Товар">
+                  <div><b><%= p.title %></b></div>
+                  <div class="muted small">Артикул: <%= p.sku %></div>
+                </td>
+                <td data-label="Категория"><%= p.category_name %></td>
+                <td data-label="Бренд"><%= p.brand_name %></td>
+                <td data-label="Цена"><b><%= p.price %> ₽</b></td>
+                <td data-label="Остаток"><%= p.stock %></td>
+                <td>
+                  <div class="table__actions">
+                    <a class="btn btn--ghost" href="/admin/products/<%= p.id %>/edit">Изменить</a>
+                    <form method="POST" action="/admin/products/<%= p.id %>/delete" onsubmit="return confirm('Удалить товар?')">
+                      <button class="btn" type="submit">Удалить</button>
+                    </form>
+                  </div>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    <% } %>
+  </div>
+</main>
+
+<%- include("../partials/footer") %>
+<%- include("../partials/tail") %>

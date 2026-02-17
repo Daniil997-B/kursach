@@ -1,0 +1,81 @@
+<%- include("../partials/head") %>
+<%- include("../partials/header") %>
+
+<main class="container section">
+  <div class="grid-2">
+    <div class="card pad">
+      <h1 class="h1">Профиль</h1>
+
+      <% if (saved) { %>
+        <div class="alert alert--ok">Данные сохранены.</div>
+      <% } %>
+
+      <form method="POST" action="/profile/update" class="form">
+        <label class="field">
+          <div class="label">Имя</div>
+          <input name="name" required value="<%= profileUser.name %>" />
+        </label>
+
+        <label class="field">
+          <div class="label">Телефон</div>
+          <input name="phone" value="<%= profileUser.phone || '' %>" placeholder="+7 ..." />
+        </label>
+
+        <label class="field">
+          <div class="label">Email</div>
+          <input value="<%= profileUser.email %>" disabled />
+        </label>
+
+        <button class="btn" type="submit">Сохранить</button>
+      </form>
+    </div>
+
+    <div class="card pad">
+      <h2 class="h2">История заказов</h2>
+
+      <% if (!orders.length) { %>
+        <div class="empty">
+          <div class="empty__title">Пока нет заказов</div>
+          <div class="muted">Оформи заказ в корзине — он появится здесь.</div>
+        </div>
+      <% } else { %>
+        <div class="orders">
+          <% orders.forEach(o => { %>
+            <details class="order">
+              <summary class="order__sum">
+                <div>
+                  <div class="order__title">Заказ #<%= o.id %></div>
+                  <div class="muted small"><%= new Date(o.created_at).toLocaleString('ru-RU') %></div>
+                </div>
+                <div class="order__right">
+                  <span class="badge badge--info"><%= STATUS_LABEL[o.status] %></span>
+                  <b><%= o.total %> ₽</b>
+                </div>
+              </summary>
+
+              <div class="order__body">
+                <div class="muted small">Адрес: <b><%= o.address %></b></div>
+
+                <div class="order__items">
+                  <% (itemsByOrder[o.id] || []).forEach(it => { %>
+                    <div class="order__item">
+                      <div>
+                        <div><b><%= it.title %></b></div>
+                        <div class="muted small">Артикул: <%= it.sku %></div>
+                      </div>
+                      <div class="muted"><%= it.qty %> × <%= it.price %> ₽</div>
+                      <div><b><%= it.line_total %> ₽</b></div>
+                    </div>
+                  <% }) %>
+                </div>
+              </div>
+            </details>
+          <% }) %>
+        </div>
+      <% } %>
+    </div>
+  </div>
+</main>
+
+<%- include("../partials/footer") %>
+<%- include("../partials/tail") %>

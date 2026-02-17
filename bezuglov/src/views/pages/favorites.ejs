@@ -1,0 +1,140 @@
+<%- include("../partials/head") %>
+<%- include("../partials/header") %>
+
+<main class="container section">
+  <div class="card pad">
+  <h1 class="h1">Избранное</h1>
+  <p class="muted">Сохраненные товары. Можно фильтровать, сортировать и листать страницы.</p>
+
+  <form class="filters" method="GET" action="/favorites">
+    <div class="filters__row">
+      <input class="input" name="q" placeholder="Поиск: название или артикул" value="<%= filters.q || '' %>" />
+      <button class="btn btn--primary" type="submit">Найти</button>
+      <a class="btn btn--ghost" href="/favorites">Сброс</a>
+    </div>
+
+    <div class="filters__grid">
+      <label class="field">
+        <div class="label">Категория</div>
+        <select name="category">
+          <option value="">Все</option>
+          <% categories.forEach(c => { %>
+            <option value="<%= c.slug %>" <%= (filters.category === c.slug ? "selected" : "") %>><%= c.name %></option>
+          <% }) %>
+        </select>
+      </label>
+
+      <label class="field">
+        <div class="label">Бренд</div>
+        <select name="brand">
+          <option value="">Все</option>
+          <% brands.forEach(b => { %>
+            <option value="<%= b.id %>" <%= (String(filters.brand || "") === String(b.id) ? "selected" : "") %>><%= b.name %></option>
+          <% }) %>
+        </select>
+      </label>
+
+      <label class="field">
+        <div class="label">Цена от</div>
+        <input name="minPrice" type="number" min="0" value="<%= filters.minPrice || '' %>" />
+      </label>
+
+      <label class="field">
+        <div class="label">Цена до</div>
+        <input name="maxPrice" type="number" min="0" value="<%= filters.maxPrice || '' %>" />
+      </label>
+
+      <label class="field">
+        <div class="label">Сортировка</div>
+        <select name="sort">
+          <option value="new" <%= (filters.sort === "new" || !filters.sort ? "selected" : "") %>>По добавлению</option>
+          <option value="price_asc" <%= (filters.sort === "price_asc" ? "selected" : "") %>>Цена ↑</option>
+          <option value="price_desc" <%= (filters.sort === "price_desc" ? "selected" : "") %>>Цена ↓</option>
+          <option value="name_asc" <%= (filters.sort === "name_asc" ? "selected" : "") %>>Название A→Я</option>
+          <option value="name_desc" <%= (filters.sort === "name_desc" ? "selected" : "") %>>Название Я→A</option>
+        </select>
+      </label>
+
+      <label class="field field--check">
+        <input type="checkbox" name="inStock" value="1" <%= (filters.inStock === "1" ? "checked" : "") %> />
+        <span>Только в наличии</span>
+      </label>
+
+      <input type="hidden" name="page" value="1" />
+    </div>
+  </form>
+</div>
+
+<section class="catalog">
+    <% if (!products.length) { %>
+      <div class="card pad">
+        <div class="empty">
+          <div class="empty__title">Избранное пустое</div>
+          <div class="muted">Добавь товары в избранное на главной или на странице товара.</div>
+          <a class="btn btn--primary" href="/">В каталог</a>
+        </div>
+      </div>
+    <% } else { %>
+      <div class="cards">
+        <% products.forEach(p => { %>
+          <article class="product card">
+            <a class="product__img" href="/product/<%= p.id %>">
+              <img src="<%= p.photo_url || 'https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?auto=format&fit=crop&w=800&q=60' %>" alt="" />
+            </a>
+
+            <div class="product__body">
+              <div class="product__top">
+                <div class="product__titles">
+                  <a class="product__title" href="/product/<%= p.id %>"><%= p.title %></a>
+                  <div class="muted small">Артикул: <b><%= p.sku %></b> · <%= p.brand_name %></div>
+                </div>
+
+                <form method="POST" action="/favorites/toggle">
+                  <input type="hidden" name="productId" value="<%= p.id %>" />
+                  <button class="iconbtn" type="submit" title="Убрать">❤</button>
+                </form>
+              </div>
+
+              <div class="product__meta">
+                <div class="price"><%= p.price %> ₽</div>
+                <% if (p.stock > 0) { %>
+                  <span class="badge badge--ok">В наличии</span>
+                <% } else { %>
+                  <span class="badge badge--bad">Нет</span>
+                <% } %>
+              </div>
+
+              <div class="product__actions">
+                <form method="POST" action="/cart/add" class="row">
+                  <input type="hidden" name="productId" value="<%= p.id %>" />
+                  <input class="qty" name="qty" type="number" min="1" value="1" />
+                  <button class="btn btn--primary btn--wide" type="submit" <%= p.stock > 0 ? "" : "disabled" %>>В корзину</button>
+                </form>
+</div>
+            </div>
+          </article>
+        <% }) %>
+      </div>
+
+      <% if (pager && pager.pages > 1) { %>
+  <div class="pager">
+    <% const q = new URLSearchParams(filters); %>
+    <% const prev = Math.max(1, pager.page - 1); %>
+    <% const next = Math.min(pager.pages, pager.page + 1); %>
+
+    <a class="btn btn--ghost" href="?<%= (q.set('page', String(prev)), q.toString()) %>" <%= pager.page === 1 ? 'aria-disabled="true"' : '' %>>←</a>
+
+    <div class="pager__text muted">
+      Страница <b><%= pager.page %></b> из <b><%= pager.pages %></b> · всего <b><%= pager.total %></b>
+    </div>
+
+    <a class="btn btn--ghost" href="?<%= (q.set('page', String(next)), q.toString()) %>" <%= pager.page === pager.pages ? 'aria-disabled="true"' : '' %>>→</a>
+  </div>
+<% } %>
+
+    <% } %>
+  </section>
+</main>
+
+<%- include("../partials/footer") %>
+<%- include("../partials/tail") %>

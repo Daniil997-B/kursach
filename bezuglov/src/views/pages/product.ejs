@@ -1,0 +1,58 @@
+<%- include("../partials/head") %>
+<%- include("../partials/header") %>
+
+<main class="container section">
+  <div class="breadcrumbs">
+    <a href="/">Главная</a>
+    <span class="muted">/</span>
+    <span><%= product.title %></span>
+  </div>
+
+  <div class="card pad productpage">
+    <div class="productpage__img">
+      <img src="<%= product.photo_url || 'https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?auto=format&fit=crop&w=1200&q=60' %>" alt="" />
+    </div>
+
+    <div class="productpage__info">
+      <h1 class="h1"><%= product.title %></h1>
+      <div class="muted">Артикул: <b><%= product.sku %></b> · Бренд: <b><%= product.brand_name %></b> · Категория: <b><%= product.category_name %></b></div>
+
+      <div class="productpage__row">
+        <div class="price price--big"><%= product.price %> ₽</div>
+        <% if (product.stock > 0) { %>
+          <span class="badge badge--ok">В наличии: <%= product.stock %></span>
+        <% } else { %>
+          <span class="badge badge--bad">Нет в наличии</span>
+        <% } %>
+      </div>
+
+      <% if (product.description) { %>
+        <div class="desc"><%= product.description %></div>
+      <% } else { %>
+        <div class="desc muted">Описание не заполнено (учебный проект).</div>
+      <% } %>
+
+      <div class="productpage__actions">
+        <form method="POST" action="/cart/add" class="row">
+          <input type="hidden" name="productId" value="<%= product.id %>" />
+          <input class="qty" name="qty" type="number" min="1" value="1" />
+          <button class="btn btn--wide" type="submit" <%= product.stock > 0 ? "" : "disabled" %>>В корзину</button>
+        </form>
+
+        <% if (user) { %>
+          <form method="POST" action="/favorites/toggle" class="row">
+            <input type="hidden" name="productId" value="<%= product.id %>" />
+            <button class="btn btn--ghost btn--wide" type="submit">
+              <%= isFav ? "Убрать из избранного" : "В избранное" %>
+            </button>
+          </form>
+        <% } else { %>
+          <a class="btn btn--ghost btn--wide" href="/login">Войти для избранного</a>
+        <% } %>
+      </div>
+    </div>
+  </div>
+</main>
+
+<%- include("../partials/footer") %>
+<%- include("../partials/tail") %>

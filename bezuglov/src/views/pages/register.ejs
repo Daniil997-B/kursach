@@ -1,0 +1,43 @@
+<%- include("../partials/head") %>
+<%- include("../partials/header") %>
+
+<main class="container section narrow">
+  <div class="card pad">
+    <h1 class="h1">Регистрация</h1>
+
+    <% if (typeof error !== "undefined" && error) { %>
+      <div class="alert alert--err"><%= error %></div>
+    <% } %>
+
+    <form method="POST" action="/register" class="form">
+      <label class="field">
+        <div class="label">Имя</div>
+        <input name="name" required placeholder="Иван" />
+      </label>
+
+      <label class="field">
+        <div class="label">Телефон</div>
+        <input name="phone" placeholder="+7 ..." />
+      </label>
+
+      <label class="field">
+        <div class="label">Email</div>
+        <input name="email" type="email" required placeholder="you@example.com" />
+      </label>
+
+      <label class="field">
+        <div class="label">Пароль</div>
+        <input name="password" type="password" required placeholder="минимум 6 символов" />
+      </label>
+
+      <button class="btn btn--wide" type="submit">Создать аккаунт</button>
+    </form>
+
+    <div class="muted small">
+      Уже есть аккаунт? <a href="/login">Вход</a>
+    </div>
+  </div>
+</main>
+
+<%- include("../partials/footer") %>
+<%- include("../partials/tail") %>

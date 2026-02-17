@@ -1,0 +1,82 @@
+<%- include("../partials/head") %>
+<%- include("../partials/header") %>
+
+<main class="container section">
+  <div class="card pad narrow">
+    <div class="breadcrumbs">
+      <a href="/admin/orders">Админ</a>
+      <span>→</span>
+      <a href="/admin/products">Товары</a>
+      <span>→</span>
+      <span><%= mode === "create" ? "Добавить" : "Редактировать" %></span>
+    </div>
+
+    <h1 class="h1"><%= mode === "create" ? "Добавить товар" : "Редактировать товар" %></h1>
+
+    <% if (error) { %>
+      <div class="alert alert--err"><%= error %></div>
+    <% } %>
+
+    <form class="form" method="POST" action="<%= mode === 'create' ? '/admin/products/new' : ('/admin/products/' + product.id + '/edit') %>">
+      <label class="field">
+        <div class="label">Артикул (SKU)</div>
+        <input name="sku" value="<%= product.sku || '' %>" required>
+      </label>
+
+      <label class="field">
+        <div class="label">Название</div>
+        <input name="title" value="<%= product.title || '' %>" required>
+      </label>
+
+      <div class="row" style="gap:12px; flex-wrap:wrap">
+        <label class="field" style="flex:1; min-width:220px">
+          <div class="label">Категория</div>
+          <select name="category_id">
+            <% categories.forEach(c => { %>
+              <option value="<%= c.id %>" <%= String(product.category_id) === String(c.id) ? "selected" : "" %>><%= c.name %></option>
+            <% }) %>
+          </select>
+        </label>
+
+        <label class="field" style="flex:1; min-width:220px">
+          <div class="label">Бренд</div>
+          <select name="brand_id">
+            <% brands.forEach(b => { %>
+              <option value="<%= b.id %>" <%= String(product.brand_id) === String(b.id) ? "selected" : "" %>><%= b.name %></option>
+            <% }) %>
+          </select>
+        </label>
+      </div>
+
+      <div class="row" style="gap:12px; flex-wrap:wrap">
+        <label class="field" style="flex:1; min-width:220px">
+          <div class="label">Цена (₽)</div>
+          <input type="number" min="0" name="price" value="<%= product.price || 0 %>">
+        </label>
+
+        <label class="field" style="flex:1; min-width:220px">
+          <div class="label">Остаток</div>
+          <input type="number" min="0" name="stock" value="<%= product.stock || 0 %>">
+        </label>
+      </div>
+
+      <label class="field">
+        <div class="label">Ссылка на фото (URL)</div>
+        <input name="photo_url" value="<%= product.photo_url || '' %>" placeholder="https://...">
+      </label>
+
+      <label class="field">
+        <div class="label">Описание</div>
+        <textarea name="description" rows="5" placeholder="Короткое описание товара..."><%= product.description || '' %></textarea>
+      </label>
+
+      <div class="row" style="justify-content:space-between; flex-wrap:wrap">
+        <a class="btn btn--ghost" href="/admin/products">Назад</a>
+        <button class="btn btn--primary" type="submit">Сохранить</button>
+      </div>
+    </form>
+  </div>
+</main>
+
+<%- include("../partials/footer") %>
+<%- include("../partials/tail") %>

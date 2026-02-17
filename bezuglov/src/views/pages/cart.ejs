@@ -1,0 +1,58 @@
+<%- include("../partials/head") %>
+<%- include("../partials/header") %>
+
+<main class="container section">
+  <div class="card pad">
+    <h1 class="h1">Корзина</h1>
+
+    <% if (!cart.items.length) { %>
+      <div class="empty">
+        <div class="empty__title">Корзина пуста</div>
+        <div class="muted">Добавь товары на главной странице.</div>
+        <a class="btn" href="/">Перейти в каталог</a>
+      </div>
+    <% } else { %>
+      <div class="cart" data-cart>
+        <div class="cart__list">
+          <% cart.items.forEach(it => { %>
+            <div class="cart__item" data-item data-id="<%= it.productId %>" data-price="<%= it.price %>">
+              <img class="cart__img" src="<%= it.photo_url || 'https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?auto=format&fit=crop&w=300&q=60' %>" alt="" />
+              <div class="cart__info">
+                <div class="cart__title"><%= it.title %></div>
+                <div class="muted small">Артикул: <b><%= it.sku %></b></div>
+              </div>
+
+              <div class="cart__price"><span data-price><%= it.price %></span> ₽</div>
+
+              <div class="cart__qty">
+                <input class="qty" type="number" min="1" value="<%= it.qty %>" data-qty>
+              </div>
+
+              <div class="cart__sum"><span data-sum><%= it.price * it.qty %></span> ₽</div>
+
+              <div class="cart__rm">
+                <form method="POST" action="/cart/remove">
+                  <input type="hidden" name="productId" value="<%= it.productId %>">
+                  <button class="linkbtn" type="submit">Удалить</button>
+                </form>
+              </div>
+            </div>
+          <% }) %>
+        </div>
+
+        <div class="cart__footer">
+          <div class="cart__hint muted small">Количество и сумма пересчитываются автоматически.</div>
+
+          <div class="cart__total">
+            <div class="muted">Итого</div>
+            <div class="price price--big"><span data-total><%= cart.total %></span> ₽</div>
+            <a class="btn btn--primary btn--wide" href="/checkout">Оформить заказ</a>
+          </div>
+        </div>
+      </div>
+    <% } %>
+  </div>
+</main>
+
+<%- include("../partials/footer") %>
+<%- include("../partials/tail") %>

@@ -1,0 +1,16 @@
+<%- include("../partials/head") %>
+<%- include("../partials/header") %>
+
+<main class="container section narrow">
+  <div class="card pad">
+    <h1 class="h1">Заказ оформлен ✅</h1>
+    <p class="muted">Номер заказа: <b>#<%= orderId %></b></p>
+    <div class="row">
+      <a class="btn btn--wide" href="/profile">Перейти в профиль</a>
+      <a class="btn btn--ghost btn--wide" href="/">Продолжить покупки</a>
+    </div>
+  </div>
+</main>
+
+<%- include("../partials/footer") %>
+<%- include("../partials/tail") %>

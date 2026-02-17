@@ -1,0 +1,68 @@
+<%- include("../partials/head") %>
+<%- include("../partials/header") %>
+
+<main class="container section">
+  <div class="card pad">
+    <div class="row" style="justify-content:space-between; align-items:flex-start; flex-wrap:wrap">
+  <div>
+    <h1 class="h1">Админ · Заказы</h1>
+  </div>
+  </div>
+    <p class="muted">Здесь администратор меняет статус заказа для отслеживания в профиле.</p>
+
+  <%- include("../partials/admin_tabs", { active: "orders" }) %>
+
+    <% if (!orders.length) { %>
+      <div class="empty">
+        <div class="empty__title">Заказов пока нет</div>
+      </div>
+    <% } else { %>
+      <div class="orders admin">
+        <% orders.forEach(o => { %>
+          <details class="order">
+            <summary class="order__sum">
+              <div>
+                <div class="order__title">Заказ #<%= o.id %></div>
+                <div class="muted small"><%= new Date(o.created_at).toLocaleString('ru-RU') %> · <%= o.user_name %> (<%= o.user_email %>)</div>
+              </div>
+              <div class="order__right">
+                <span class="badge badge--info"><%= STATUS_LABEL[o.status] %></span>
+                <b><%= o.total %> ₽</b>
+              </div>
+            </summary>
+
+            <div class="order__body">
+              <div class="muted small">Адрес: <b><%= o.address %></b></div>
+
+              <form method="POST" action="/admin/orders/status" class="row admin__status">
+                <input type="hidden" name="orderId" value="<%= o.id %>">
+                <select name="status">
+                  <option value="in_transit" <%= o.status === 'in_transit' ? 'selected' : '' %>>В пути</option>
+                  <option value="pickup_point" <%= o.status === 'pickup_point' ? 'selected' : '' %>>В пункте выдачи</option>
+                  <option value="done" <%= o.status === 'done' ? 'selected' : '' %>>Завершен</option>
+                </select>
+                <button class="btn" type="submit">Сохранить статус</button>
+              </form>
+
+              <div class="order__items">
+                <% (itemsByOrder[o.id] || []).forEach(it => { %>
+                  <div class="order__item">
+                    <div>
+                      <div><b><%= it.title %></b></div>
+                      <div class="muted small">Артикул: <%= it.sku %></div>
+                    </div>
+                    <div class="muted"><%= it.qty %> × <%= it.price %> ₽</div>
+                    <div><b><%= it.line_total %> ₽</b></div>
+                  </div>
+                <% }) %>
+              </div>
+            </div>
+          </details>
+        <% }) %>
+      </div>
+    <% } %>
+  </div>
+</main>
+
+<%- include("../partials/footer") %>
+<%- include("../partials/tail") %>

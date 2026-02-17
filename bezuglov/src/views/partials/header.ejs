@@ -1,0 +1,28 @@
+<header class="header">
+  <div class="container header__row">
+    <a class="logo" href="/" aria-label="На главную">
+      <span class="logo__text">Автозапчасти Daniila</span>
+    </a>
+
+    <button class="navbtn" type="button" aria-label="Открыть меню" data-nav-toggle>☰</button>
+
+    <nav class="nav" data-nav>
+      <a href="/" class="nav__link">Главная</a>
+      <a href="/favorites" class="nav__link">Избранное</a>
+      <a href="/cart" class="nav__link">Корзина <span class="chip"><%= cart.qty || 0 %></span></a>
+
+      <% if (!user) { %>
+        <a href="/login" class="nav__link">Вход</a>
+        <a class="btn btn--primary" href="/register">Регистрация</a>
+      <% } else { %>
+        <a href="/profile" class="nav__link">Профиль</a>
+        <% if (user.role === "admin") { %>
+          <a href="/admin/orders" class="nav__link">Админ</a>
+        <% } %>
+        <form action="/logout" method="POST" class="inline">
+          <button class="btn btn--ghost" type="submit">Выйти</button>
+        </form>
+      <% } %>
+    </nav>
+  </div>
+</header>
